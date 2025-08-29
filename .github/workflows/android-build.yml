@@ -1,58 +1,50 @@
-
-name: Android APK Build
+name: Build Android APK
 
 on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+  workflow_dispatch:  # manual trigger
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install npm dependencies
+        run: npm install
+
+      - name: Build web assets
+        run: |
+          if [ -f package.json ] && grep -q "\"build\"" package.json; then
+            npm run build
+          else
+            mkdir -p www
+            cp -r ./index.html ./style.css ./app.js ./service-worker.js ./manifest.json ./www/
+          fi
+
+      - name: Install Capacitor CLI
+        run: npm install @capacitor/cli @capacitor/core --save
+
+      - name: Sync Android
+        run: npx cap sync android
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '17'
-      - name: Install Node.js
-        uses: actions/setup-node@v4
+          java-version: 17
+
+      - name: Build APK
+        run: cd android && ./gradlew assembleDebug --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
         with:
-          node-version: '20'
-      - name: Install Android SDK dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y unzip wget lib32stdc++6 lib32z1
-      - name: Install Android SDK Command-line tools
-        run: |
-          mkdir -p $HOME/android-sdk
-          cd $HOME/android-sdk
-          wget https://dl.google.com/android/repository/commandlinetools-linux-109.0.0_latest.zip -O tools.zip
-          unzip tools.zip -d cmdline-tools
-          mkdir -p $HOME/android-sdk/cmdline-tools/latest
-          mv cmdline-tools/* $HOME/android-sdk/cmdline-tools/latest/
-          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk "platform-tools" "platforms;android-33" "build-tools;33.0.2"
-      - name: Export SDK vars
-        run: |
-          echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
-          echo "$HOME/android-sdk/platform-tools" >> $GITHUB_PATH
-      - name: Install project deps
-        run: |
-          npm ci
-      - name: Initialize Capacitor & add Android
-        run: |
-          npx cap init "Cyber Habit" com.example.cyberhabit --web-dir="."
-          npx cap add android || true
-          npx cap sync android
-      - name: Build Android APK (debug)
-        run: |
-          cd android
-          ./gradlew assembleDebug --no-daemon
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: cyber-habit-apk
+          name: CyberHabit-v1.apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
