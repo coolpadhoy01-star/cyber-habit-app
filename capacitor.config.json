@@ -1,0 +1,6 @@
+{
+  "appId": "com.example.cyberhabit",
+  "appName": "Cyber Habit",
+  "webDir": ".",
+  "bundledWebRuntime": false
+}

@@ -1,0 +1,20 @@
+{
+  "name": "cyber-habit-pwa",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "serve": "npx http-server ./ -p 8000 --cors",
+    "build:web": "echo \"no-op (static web files already present)\"",
+    "cap:init": "npx cap init \"Cyber Habit\" com.example.cyberhabit --web-dir=\".\"",
+    "cap:add:android": "npx cap add android",
+    "cap:sync": "npx cap sync",
+    "cap:open:android": "npx cap open android",
+    "cap:build:android": "npx cap copy android && (cd android && ./gradlew assembleDebug) || (cd android && gradlew.bat assembleDebug)"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@capacitor/cli": "^5.0.0",
+    "@capacitor/core": "^5.0.0",
+    "@capacitor/local-notifications": "^1.0.0"
+  }
+}

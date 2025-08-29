@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cyber Habit — Mission Board</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#00ffff">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="./icons/icon-192.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+</head>
+<body>
+  <header class="app-header">
+    <h1>Cyber Habit</h1>
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="board">Mission Board</button>
+      <button class="tab-btn" data-tab="daily">Daily Tracker</button>
+      <button class="tab-btn" data-tab="settings">Settings</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Mission Board -->
+    <section id="tab-board" class="tab active">
+      <div class="toolbar">
+        <button id="add-super-goal" class="btn">+ Super Goal</button>
+      </div>
+      <div id="super-goals" class="grid"></div>
+    </section>
+
+    <!-- Daily Tracker -->
+    <section id="tab-daily" class="tab">
+      <div class="daily-wrap">
+        <div class="daily-toolbar">
+          <button id="reset-today" class="btn">Reset today</button>
+        </div>
+        <div id="daily-list" class="list"></div>
+      </div>
+    </section>
+
+    <!-- Settings -->
+    <section id="tab-settings" class="tab">
+      <div class="settings-section card">
+        <h2>Theme</h2>
+        <div class="theme-choices">
+          <label><input type="radio" name="theme" value="cyan" checked> Cyan</label>
+          <label><input type="radio" name="theme" value="magenta"> Magenta</label>
+          <label><input type="radio" name="theme" value="purple"> Purple</label>
+        </div>
+      </div>
+
+      <div class="settings-section card">
+        <h2>Reminders</h2>
+        <p>Times (24h HH:MM). The app will notify you when it's open.</p>
+        <div id="reminder-list"></div>
+        <div class="row">
+          <input id="reminder-input" placeholder="08:00" />
+          <button id="add-reminder" class="btn">Add time</button>
+        </div>
+        <button id="test-notification" class="btn ghost">Test notification</button>
+      </div>
+
+      <div class="settings-section card">
+        <h2>Data</h2>
+        <div class="row">
+          <button id="export-data" class="btn">Export</button>
+          <label class="btn">
+            Import <input id="import-file" type="file" accept="application/json" hidden>
+          </label>
+          <button id="reset-all" class="btn danger">Reset All</button>
+        </div>
+      </div>
+
+      <div class="settings-section card">
+        <h2>Install</h2>
+        <p>Add to your home screen to run offline and receive reminders.</p>
+        <button id="install-btn" class="btn">Install PWA</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <span>v1.0 • Offline-ready</span>
+  </footer>
+
+  <!-- templates omitted for brevity in this listing; they are included in tpl files in the project -->
+  <script src="app.js"></script>
+  <script src="mobile-glue.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js');
+      });
+    }
+  </script>
+</body>
+</html>
